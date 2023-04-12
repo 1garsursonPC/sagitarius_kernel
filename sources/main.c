@@ -2,21 +2,27 @@
 #include <stddef.h>
 #include <limine.h>
 
+#define LIMINE_REQS __attribute__((section(".limine_reqs")))
+// LIMINE_REQS specified that the given variable/function should be put in the .limine_reqs section
+
 // The Limine requests can be placed anywhere, but it is important that
 // the compiler does not optimise them away, so, usually, they should
 // be made volatile or equivalent.
 
-static volatile struct limine_framebuffer_request framebuffer_request =
+static struct limine_framebuffer_request framebuffer_request =
 {
     .id = LIMINE_FRAMEBUFFER_REQUEST,
-    .revision = 0
+    .revision = 0,
+    .response = NULL
 };
+LIMINE_REQS void* framebuffer_req = &framebuffer_request;
 
 // Halt and catch fire function.
 static void hcf(void)
 {
     asm ("cli");
-    for (;;) {
+    for (;;)
+    {
         asm("hlt");
     }
 }
@@ -27,8 +33,7 @@ static void hcf(void)
 void kernel_main(void)
 {
     // Ensure we got a framebuffer.
-    if (framebuffer_request.response == NULL
-     || framebuffer_request.response->framebuffer_count < 1)
+    if (framebuffer_request.response == NULL || framebuffer_request.response->framebuffer_count < 1)
     {
         hcf();
     }

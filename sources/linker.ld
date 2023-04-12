@@ -26,7 +26,15 @@ SECTIONS
         *(.text .text.*)
     } :text
 
-    /* Move to the next memory page for .rodata */
+    /* Move to the next memory page for .limine_reqs */
+    . += CONSTANT(MAXPAGESIZE);
+
+    .limine_reqs : {
+        KEEP(*(.limine_reqs))
+        QUAD(0)
+    } :rodata
+
+     /* Move to the next memory page for .rodata */
     . += CONSTANT(MAXPAGESIZE);
 
     .rodata : {
