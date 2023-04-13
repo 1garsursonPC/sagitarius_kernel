@@ -14,7 +14,7 @@ static void hcf(void)
     }
 }
 
-void kernel_main(void)
+void kernel_init(void)
 {
     // Ensure we got a framebuffer.
     if (framebuffer_request.response == NULL || framebuffer_request.response->framebuffer_count < 1)
