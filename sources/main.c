@@ -7,7 +7,7 @@
 // Halt and catch fire function.
 static void hcf(void)
 {
-    asm ("cli");
+    asm("cli");
     for (;;)
     {
         asm("hlt");
@@ -16,21 +16,22 @@ static void hcf(void)
 
 void kernel_init(void)
 {
-    // Ensure we got a framebuffer.
-    if (framebuffer_request.response == NULL || framebuffer_request.response->framebuffer_count < 1)
+    const struct limine_bootloader_info_response* bootloader_info = get_bootloader_info_response();
+    if (bootloader_info == NULL)
     {
+        // TODO : print an error message on the serial port
         hcf();
     }
 
-//     // Fetch the first framebuffer.
-//     struct limine_framebuffer *framebuffer = framebuffer_request.response->framebuffers[0];
-//
-//     // Note: we assume the framebuffer model is RGB with 32-bit pixels.
-//     for (size_t i = 0; i < 100; i++)
-//     {
-//         uint32_t *fb_ptr = framebuffer->address;
-//         fb_ptr[i * (framebuffer->pitch / 4) + i] = 0xffffff;
-//     }
+    const struct limine_framebuffer_response* framebuffer_info = get_framebuffer_response();
+    if (framebuffer_info == NULL)
+    {
+        // TODO : print an error message on the serial port
+        hcf();
+    }
+
+    // TODO : print bootloader info
+
 
     // We're done, just hang...
     hcf();
